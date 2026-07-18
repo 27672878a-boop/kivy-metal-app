@@ -26,11 +26,18 @@ jobs:
 
     - name: Build with Buildozer
       run: |
-        # Установка правильных прав и принятие лицензий
+        # Установка cmdline-tools для работы sdkmanager
+        mkdir -p /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
+        unzip -q /tmp/cmdline-tools.zip -d /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools
+        mv /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/cmdline-tools /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+        
+        # Экспорт путей
         export ANDROID_HOME=/home/runner/.buildozer/android/platform/android-sdk
-        mkdir -p $ANDROID_HOME/licenses
-        echo "8933bad161af4178b1185d1a37fbf41ea5261c55" > $ANDROID_HOME/licenses/android-sdk-license
-        echo "d56f5187473751e967a21626f634351b69678e7f" >> $ANDROID_HOME/licenses/android-sdk-license
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        
+        # Принятие лицензий
+        yes | sdkmanager --licenses || true
         
         # Запуск сборки
         buildozer -v android debug
