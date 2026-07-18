@@ -8,7 +8,8 @@ version = 0.1
 android.ndk = 25b
 android.ndk_version = 25b
 requirements = python3, kivy, numpy, matplotlib, kivy_garden.matplotlib
-
+android.sdk_path = /home/runner/.buildozer/android/platform/android-sdk
+android.ndk_path = /home/runner/.buildozer/android/platform/android-ndk-r25b
 orientation = portrait
 fullscreen = 0
 android.archs = arm64-v8a, armeabi-v7a
