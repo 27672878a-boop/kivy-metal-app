@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -27,13 +26,11 @@ jobs:
 
     - name: Build with Buildozer
       run: |
-        # Установка необходимых компонентов для Android SDK
-        sudo apt-get install -y openjdk-17-jdk-headless
-        
-        # Принудительное принятие лицензий
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-        yes | sdkmanager --licenses || true
+        # Установка правильных прав и принятие лицензий
+        export ANDROID_HOME=/home/runner/.buildozer/android/platform/android-sdk
+        mkdir -p $ANDROID_HOME/licenses
+        echo "8933bad161af4178b1185d1a37fbf41ea5261c55" > $ANDROID_HOME/licenses/android-sdk-license
+        echo "d56f5187473751e967a21626f634351b69678e7f" >> $ANDROID_HOME/licenses/android-sdk-license
         
         # Запуск сборки
         buildozer -v android debug
@@ -43,4 +40,3 @@ jobs:
       with:
         name: package
         path: bin/*.apk
-        
