@@ -15,6 +15,7 @@ android.api = 33
 android.minapi = 21
 android.ndk_api = 21
 android.private_storage = True
+android.sdk_build_tools_version = android.sdk_build_tools_version = 34.0.0
 
 [buildozer]
 log_level = 2
