@@ -26,25 +26,29 @@ jobs:
 
     - name: Build with Buildozer
       run: |
-        # Экспортируем пути, чтобы Buildozer увидел наш SDK
+        # Устанавливаем переменные для SDK
         export ANDROID_HOME=/home/runner/.buildozer/android/platform/android-sdk
-        export ANDROID_SDK_HOME=$ANDROID_HOME
         
-        # Устанавливаем cmdline-tools
+        # Создаем структуру, которую Buildozer ищет по ошибке
+        mkdir -p $ANDROID_HOME/tools/bin
+        
+        # Скачиваем и распаковываем cmdline-tools
         mkdir -p $ANDROID_HOME/cmdline-tools
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
         unzip -q /tmp/cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
         mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
         
-        # Создаем структуру, которую ожидает Buildozer
-        mkdir -p $ANDROID_HOME/tools/bin
+        # Создаем симлинк, чтобы Buildozer нашел sdkmanager там, где ожидает
         ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
         
-        # Принимаем лицензии
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        # Устанавливаем JAVA_HOME на версию 17
+        export JAVA_HOME=$JAVA_HOME_17_X64
+        export PATH=$JAVA_HOME/bin:$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
         
-        # ПРИНУДИТЕЛЬНО указываем Buildozer'у, где лежит SDK, через переменные окружения
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        # Принимаем лицензии
+        yes | sdkmanager --licenses || true
+        
+        # Запуск сборки
         buildozer -v android debug
         
     - name: Upload APK Artifact
