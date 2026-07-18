@@ -27,6 +27,9 @@ jobs:
 
     - name: Build with Buildozer
       run: |
+        # Автоматическое принятие всех лицензий Android SDK
+        mkdir -p ~/.android && touch ~/.android/repositories.cfg
+        yes | sdkmanager --licenses || true
         buildozer -v android debug
 
     - name: Upload APK Artifact
