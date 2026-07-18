@@ -26,12 +26,30 @@ jobs:
 
     - name: Build with Buildozer
       run: |
-        # Устанавливаем Java 17 глобально для этого шага
+        # Устанавливаем Java 17 для совместимости
         export JAVA_HOME=$JAVA_HOME_17_X64
         export PATH=$JAVA_HOME/bin:$PATH
         
-        # ... (дальше ваш код установки sdk и buildozer)
+        # Настройка путей SDK
+        export ANDROID_HOME=/home/runner/.buildozer/android/platform/android-sdk
+        mkdir -p $ANDROID_HOME/cmdline-tools
         
+        # Установка актуальных инструментов
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip
+        unzip -q /tmp/cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
+        mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+        
+        # Создаем структуру, которую Buildozer ищет по старой привычке
+        mkdir -p $ANDROID_HOME/tools/bin
+        ln -sf $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
+        
+        # Принятие лицензий
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        yes | sdkmanager --licenses || true
+        
+        # Запуск сборки
+        buildozer -v android debug
+
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
