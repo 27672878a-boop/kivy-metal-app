@@ -33,9 +33,9 @@ jobs:
         unzip -q /tmp/cmdline-tools.zip -d $ANDROID_HOME/cmdline-tools
         mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
         
-        # Создаем симлинки, чтобы Buildozer нашел sdkmanager там, где он ожидает
-        mkdir -p $ANDROID_HOME/tools/bin
-        ln -s $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager $ANDROID_HOME/tools/bin/sdkmanager
+        # Установка JAVA_HOME в версию 17, которая поддерживает новые инструменты SDK
+        export JAVA_HOME=$JAVA_HOME_17_X64
+        export PATH=$JAVA_HOME/bin:$PATH
         
         # Принятие лицензий
         export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
@@ -43,7 +43,7 @@ jobs:
         
         # Запуск сборки
         buildozer -v android debug
-
+        
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
