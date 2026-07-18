@@ -5,6 +5,7 @@ package.domain = org.marking
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 version = 0.1
+android.ndk = 25b
 android.ndk_version = 25b
 requirements = python3, kivy, numpy, matplotlib, kivy_garden.matplotlib
 
